@@ -102,6 +102,10 @@ Plug 'vimwiki/vimwiki'
 " External Utilities
 Plug 'benmills/vimux'
 
+" Make sure you use single quotes
+" Plugin file system explorer https://github.com/preservim/nerdtree 
+Plug 'preservim/nerdtree'
+
 " Initialize plugin system
 call plug#end()
 
@@ -734,6 +738,7 @@ let g:fzf_action = {
 " [Buffers] Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
 
+
 " Key Mappings
 nnoremap <C-g>b :Buffers <CR>
 nnoremap <C-g>w :Windows <CR>
@@ -741,6 +746,12 @@ nnoremap <C-g>g :Ag <CR>
 nnoremap <C-g>r :Ag <C-r>"<CR>
 nnoremap <leader><leader> :Commands<CR>
 nnoremap <C-p> :call FzfOmniFiles()<CR>
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+" <C-_> equal <C-/> https://stackoverflow.com/questions/9051837/how-to-map-c-to-toggle-comments-in-vim
+nmap <C-_> <Plug>NERDCommenterToggle
+vmap <C-_> <Plug>NERDCommenterToggle
 
 fun! FzfOmniFiles()
     let is_git = system('git status')
@@ -827,6 +838,21 @@ let g:echodoc#type = 'signature'
 " Nerd Commenter
 "------------------------------
 let NERDSpaceDelims = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines = 1
+
+"-----------------------------
+" lsp setting
+"-----------------------------
+set foldmethod=expr
+  \ foldexpr=lsp#ui#vim#folding#foldexpr()
+  \ foldtext=lsp#ui#vim#folding#foldtext()
+let g:lsp_fold_enabled = 1
+" Default not folding all
+set foldlevel=99
 
 "------------------------------
 " Indent Guides
@@ -1038,3 +1064,14 @@ map <Leader>vl :VimuxRunLastCommand<CR>
 "------------------------------
 " Set to 0 if you want to enable it later via :RainbowToggle
 let g:rainbow_active = 1
+
+
+" Start NERDTree and put the cursor back in the other window.
+autocmd VimEnter * NERDTree | wincmd p
+
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Enable mouse cursor
+:set mouse=a
